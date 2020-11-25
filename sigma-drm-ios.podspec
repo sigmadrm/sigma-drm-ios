@@ -27,7 +27,7 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/sigmadrm/sigma-drm-ios.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
-  s.public_header_files = 'include/**'
+  s.public_header_files = 'include/*.h'
   s.vendored_libraries = 'lib/libSigmaDRM.a'
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => "${PODS_ROOT}/#{s.name}/include/**" }
   s.static_framework = true
