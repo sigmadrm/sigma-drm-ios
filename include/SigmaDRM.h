@@ -12,6 +12,7 @@
 @protocol SigmaDRMDelegate
 @optional
 -(void)onSigmaStatus:(NSInteger)status;
+-(void)onSigmaData:(NSDictionary *)info;
 -(void)onProgressLoad:(NSString *)progressName status:(NSString *)error;
 @end
 @interface SigmaDRM : NSObject
@@ -29,8 +30,8 @@
 -(NSString *)merchantId;
 -(void)setAuthToken:(NSString *)token;
 -(NSString *)authToken;
--(void)setSigmaUid:(NSString *)sigmaUid;
--(NSString *)sigmaUid;
+-(void)setUserUid:(NSString *)userId;
+-(NSString *)userId;
 -(void)setDrmUrl:(NSArray *)drmList;
 -(NSArray *)drmList;
 
