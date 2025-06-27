@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <AVFoundation/AVAsset.h>
-@protocol SigmaDRMDelegate
+@protocol SigmaDRMDelegate<NSObject>
 @optional
 -(void)onSigmaStatus:(NSInteger)status;
 -(void)onSigmaData:(NSDictionary *)info;
@@ -20,7 +20,7 @@
     
 }
 @property(nonatomic, weak) id<SigmaDRMDelegate> delegate;
-@property(nonatomic, strong) NSString *sessionId;
+//@property(nonatomic, strong) NSString *sessionId;
 +(SigmaDRM *)getInstance;
 -(AVURLAsset *)assetWithUrl:(NSString *)url;
 -(AVURLAsset *)assset;
@@ -32,6 +32,8 @@
 -(NSString *)authToken;
 -(void)setUserUid:(NSString *)userId;
 -(NSString *)userId;
+-(void)setSessionId:(NSString *)sessionId;
+-(NSString *)sessionId;
 -(void)setDrmUrl:(NSArray *)drmList;
 -(NSArray *)drmList;
 
