@@ -34,6 +34,7 @@
 -(NSString *)userId;
 -(void)setSessionId:(NSString *)sessionId;
 -(NSString *)sessionId;
+- (NSMutableDictionary* )getCustomData;
 -(void)setDrmUrl:(NSArray *)drmList;
 -(NSArray *)drmList;
 

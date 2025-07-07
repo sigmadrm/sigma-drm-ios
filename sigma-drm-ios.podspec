@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'sigma-drm-ios'
-  s.version          = '2.0.5'
+  s.version          = '2.0.10'
   s.summary          = 'A short description of sigma-drm-ios'
 
 # This description is used to generate tags and improve search results.
