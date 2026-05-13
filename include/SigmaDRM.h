@@ -9,34 +9,69 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <AVFoundation/AVAsset.h>
+
+/**
+ * Block cho phép tùy chỉnh việc nhận diện request lấy key AES-128.
+ */
+typedef BOOL (^SigmaKeyRequestFilter)(NSURL * _Nonnull url);
+
+/**
+ * Block cung cấp custom headers cho request lấy key AES-128.
+ */
+typedef NSDictionary<NSString *, NSString *> * _Nullable (^SigmaKeyRequestHeader)(NSURL * _Nonnull url);
+
+/**
+ * Phương thức mã hoá nội dung được SigmaDRM hỗ trợ.
+ * - SigmaEncryptionMethodNone: nội dung không mã hoá, không gắn resource loader delegate.
+ * - SigmaEncryptionMethodAES_128: HLS AES-128 chuẩn, AVPlayer tự xử lý key, không cần delegate của Sigma.
+ * - SigmaEncryptionMethodSigma: mã hoá theo chuẩn Sigma DRM (mặc định), sử dụng SigmaDrmDelegate.
+ */
+typedef NS_ENUM(NSInteger, SigmaEncryptionMethod) {
+    SigmaEncryptionMethodNone    = 0,
+    SigmaEncryptionMethodAES_128 = 1,
+    SigmaEncryptionMethodSigma   = 2,
+};
+
 @protocol SigmaDRMDelegate<NSObject>
 @optional
 -(void)onSigmaStatus:(NSInteger)status;
--(void)onSigmaData:(NSDictionary *)info;
--(void)onProgressLoad:(NSString *)progressName status:(NSString *)error;
+-(void)onSigmaData:(NSDictionary *_Nullable)info;
+-(void)onProgressLoad:(NSString *_Nullable)progressName status:(NSString *_Nullable)error;
 @end
 @interface SigmaDRM : NSObject
-{
-    
-}
-@property(nonatomic, weak) id<SigmaDRMDelegate> delegate;
-//@property(nonatomic, strong) NSString *sessionId;
-+(SigmaDRM *)getInstance;
--(AVURLAsset *)assetWithUrl:(NSString *)url;
--(AVURLAsset *)assset;
--(void)setAppId:(NSString *)appId;
--(NSString *)appId;
--(void)setMerchantId:(NSString *)merchantId;
--(NSString *)merchantId;
--(void)setAuthToken:(NSString *)token;
--(NSString *)authToken;
--(void)setUserUid:(NSString *)userId;
--(NSString *)userId;
--(void)setSessionId:(NSString *)sessionId;
--(NSString *)sessionId;
-- (NSMutableDictionary* )getCustomData;
--(void)setDrmUrl:(NSArray *)drmList;
--(NSArray *)drmList;
 
--(void)logging:(NSString *)progress status:(NSString *)status;
+#pragma mark - Core
+@property(nonatomic, weak) id<SigmaDRMDelegate> delegate;
++ (SigmaDRM *_Nullable)getInstance;
+- (AVURLAsset *_Nullable)assetWithUrl:(NSString *_Nullable)url;
+- (AVURLAsset *_Nullable)assset;
+
+#pragma mark - Encryption Control
+/**
+ * Thiết lập phương thức mã hoá cho phiên phát hiện tại.
+ */
+- (void)setEncryptionMethod:(SigmaEncryptionMethod)method;
+- (SigmaEncryptionMethod)encryptionMethod;
+- (BOOL)isEncryptionMethodSupported:(SigmaEncryptionMethod)method;
+
+#pragma mark - 1. AES-128 Configuration (Standard HLS)
+/** Custom filter để nhận diện key request cho AES-128 */
+@property(nonatomic, copy, nullable) SigmaKeyRequestFilter keyRequestFilter;
+/** Custom provider để cung cấp headers cho key request AES-128 */
+@property(nonatomic, copy, nullable) SigmaKeyRequestHeader keyRequestHeader;
+
+#pragma mark - 2. Sigma DRM Configuration (Proprietary)
+@property(nonatomic, copy, nullable) NSString *appId;
+@property(nonatomic, copy, nullable) NSString *merchantId;
+@property(nonatomic, copy, nullable) NSString *authToken;
+@property(nonatomic, copy, nullable, getter=userId, setter=setUserUid:) NSString *userId;
+@property(nonatomic, copy, nullable) NSString *sessionId;
+@property(nonatomic, strong, nullable, getter=drmList, setter=setDrmUrl:) NSArray *drmList;
+
+/** Chỉ dành riêng cho Sigma DRM */
+- (NSMutableDictionary *_Nullable)getCustomData;
+
+#pragma mark - Utilities
+- (void)logging:(NSString *_Nullable)progress status:(NSString *_Nullable)status;
+
 @end
